@@ -1,0 +1,17 @@
+import puppeteer from 'puppeteer-core';
+const b = await puppeteer.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
+const p = await b.newPage();
+await p.setViewport({ width: 1440, height: 900 });
+await p.goto('http://127.0.0.1:4250/molodetsky-moto/', { waitUntil: 'networkidle2' });
+await p.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; });
+await p.evaluate(() => document.fonts.ready);
+await new Promise(r => setTimeout(r, 900));
+await p.screenshot({ path: 'shots/m-hero.png' });
+const pre = await p.evaluate(() => Math.round(document.querySelector('#defektovka').getBoundingClientRect().top + window.scrollY));
+await p.evaluate(y => window.scrollTo({ top: y - 520, behavior: 'instant' }), pre);
+await new Promise(r => setTimeout(r, 1100));
+const stage = await p.evaluate(() => Math.round(document.querySelector('.check__stage').getBoundingClientRect().top + window.scrollY));
+await p.evaluate(y => window.scrollTo({ top: y + 1200, behavior: 'instant' }), stage);
+await new Promise(r => setTimeout(r, 900));
+await p.screenshot({ path: 'shots/m-check.png' });
+await b.close();

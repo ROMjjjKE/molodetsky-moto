@@ -1,0 +1,13 @@
+import puppeteer from 'puppeteer-core';
+const b = await puppeteer.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
+const p = await b.newPage();
+await p.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
+await p.goto('http://127.0.0.1:4250/molodetsky-moto/', { waitUntil: 'networkidle2' });
+await p.evaluate(() => { document.documentElement.style.scrollBehavior = 'auto'; });
+await p.evaluate(() => document.fonts.ready);
+await new Promise(r => setTimeout(r, 700));
+await p.evaluate(() => { const el = document.querySelector('#defektovka'); window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY + 220, behavior: 'instant' }); });
+await new Promise(r => setTimeout(r, 800));
+console.log(await p.evaluate(() => ({ cls: document.querySelector('.check').className, detailVisible: getComputedStyle(document.querySelector('.detail')).display, dVisible: getComputedStyle(document.querySelector('.item__d')).display, sw: document.documentElement.scrollWidth })));
+await p.screenshot({ path: 'shots/m-mobile-check.png' });
+await b.close();
